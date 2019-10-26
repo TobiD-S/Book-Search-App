@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    var item, title, author, publisher, bookLink, bookImg
+    var item, title, author, publisher, bookLink, bookImg, bookIsbn;
     var outputList = document.getElementById("list-output");
     var bookUrl = "https://www.googleapis.com/books/v1/volumes?q="
     var placeHldr = '<img src="https://www.google.com/url?sa=i&source=images&cd=&cad=rja&uact=8&ved=2ahUKEwjR547RhrDlAhVYAGMBHUHqDxQQjRx6BAgBEAQ&url=%2Furl%3Fsa%3Di%26source%3Dimages%26cd%3D%26ved%3D%26url%3Dhttps%253A%252F%252Ftoppsta.com%252Fblog%252Fview%252Fworld-book-day%26psig%3DAOvVaw2cGBGgPhZIN5jjRGOPrmMX%26ust%3D1571839856789657&psig=AOvVaw2cGBGgPhZIN5jjRGOPrmMX&ust=1571839856789657">'
@@ -61,6 +61,33 @@ $(document).ready(function() {
                 formatOutput(bookImg1, title1, author1, publisher1, bookLink1, bookIsbn1);
             formatOutput(bookImg2, title2, author2, publisher2, bookLink2, bookIsbn2);
             '</div>';
+
+            console.log(outputList);
+        }
+        }
+
+        /*
+        template for bootstrap cards
+        */
+        function formatOutput(bookImg, title, author, publisher, bookLink, bookIsbn) {
+            var viewerUrl = 'book.html?isbn= ' + bookIsbn;
+            var htmlCard = '<div class="col-lg-6">
+            <div class="card" style="">
+            <div class="row no-gutters">
+            <div class="col-md-4">
+            <img src="${bookImg}" class="card-img" alt="...">
+            </div>
+            <div class="col-md-8">
+            <div class="card-body">
+            <h5 class="card-title">${title}</h5>
+            <p class="card-text">Author: ${author}</p>
+            <p class="card-text">Publisher: ${publisher}</p>
+            <a target="_blank" href="${viewUrl}" class="btn btn-secondary">Read Book</a>
+            </div>
+            </div>
+            </div> </div> </div>'
+            return htmlCard;
+
         }
     }
-})
+});
