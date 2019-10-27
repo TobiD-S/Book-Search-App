@@ -64,30 +64,41 @@ $(document).ready(function() {
 
             console.log(outputList);
         }
-        }
-
-        /*
-        template for bootstrap cards
-        */
-        function formatOutput(bookImg, title, author, publisher, bookLink, bookIsbn) {
-            var viewerUrl = 'book.html?isbn= ' + bookIsbn;
-            var htmlCard = '<div class="col-lg-6">
-            <div class="card" style="">
-            <div class="row no-gutters">
-            <div class="col-md-4">
-            <img src="${bookImg}" class="card-img" alt="...">
-            </div>
-            <div class="col-md-8">
-            <div class="card-body">
-            <h5 class="card-title">${title}</h5>
-            <p class="card-text">Author: ${author}</p>
-            <p class="card-text">Publisher: ${publisher}</p>
-            <a target="_blank" href="${viewUrl}" class="btn btn-secondary">Read Book</a>
-            </div>
-            </div>
-            </div> </div> </div>'
-            return htmlCard;
-
-        }
     }
+
+    /*
+    template for bootstrap cards
+    */
+    function formatOutput(bookImg, title, author, publisher, bookLink, bookIsbn) {
+        var viewerUrl = 'book.html?isbn= ' + bookIsbn;
+        var htmlCard = '<div class="col-lg-6"> <
+            div class = "card"
+        style = "" >
+            <
+            div class = "row no-gutters" >
+            <
+            div class = "col-md-4" >
+            <
+            img src = "${bookImg}"
+        class = "card-img"
+        alt = "..." >
+            <
+            /div> <
+            div class = "col-md-8" >
+            <
+            div class = "card-body" >
+            <
+            h5 class = "card-title" > $ { title } < /h5> <
+            p class = "card-text" > Author: $ { author } < /p> <
+            p class = "card-text" > Publisher: $ { publisher } < /p> <
+            a target = "_blank"
+        href = "${viewUrl}"
+        class = "btn btn-secondary" > Read Book < /a> <
+            /div> <
+            /div> <
+            /div> </div > < /div>'
+        return htmlCard;
+
+    }
+}
 });
