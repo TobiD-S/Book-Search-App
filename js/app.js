@@ -135,3 +135,65 @@ const resultsData = {
         return (!term ? this.allResults : this.results[term]);
     }
 }
+
+const resultsView = {
+        init() {
+            this.resultsElement = document.querySelector('.results');
+            this.resultsArea = document.querySelector('#results-area');
+        },
+
+        render(list) {
+            // Create a fragment and append 'li' elements containing book entries to fragment to prevent frequent updates on DOM
+            let fragment = document.createDocumentFragment();
+
+            // Generate html for each book entry and append to fragment
+            list.forEach(item => {
+                        let bookData = item.volumeInfo;
+                        const bookItem = document.createElement('li');
+                        bookItem.className = 'book-item';
+                        // Generate html for book cover
+                        let cover = '';
+                        if (bookData.imageLinks && bookData.imageLinks.thumbnail) {
+                            const img = `<a title="Preview Link" href=${bookData.previewLink} target="_blank"><img class="thumbimg" src=${bookData.imageLinks.thumbnail} alt=${`${bookData.title} book image`}></a>`;
+    const link = `<a class="preview" title="Preview Link" href=${bookData.previewLink} target="_blank"><i class="fas fa-eye"></i></a>`;
+    cover = `<div class="image-div">
+                  ${img}
+                  ${link}
+                  </div>`;
+  }
+  else {
+    cover = `<div class="image-div backup">
+                <p class="cover-backup">Cover Image Unavailable</p>
+              </div>`
+  }
+  // Generate html for title, subtitle, and authors
+  const title = `<a class="title ellipsis" href=${bookData.previewLink} title="${bookData.title}" target="_blank">${bookData.title}</a>`;
+  let subtitleProp = bookData.subtitle ? bookData.subtitle : ' ';
+  const subtitle = `<p class="subtitle ellipsis" title="${subtitleProp}">${subtitleProp}</p>`
+  let authorsProp = bookData.authors ? bookData.authors.join(', ') : '';
+  const authors = `<p class="author ellipsis" title="${authorsProp}">${authorsProp}</p>`
+  // Add book data to book entry
+  bookItem.innerHTML = `${cover}
+                        ${title}
+                        ${subtitle}
+                        ${authors}`;
+  fragment.append(bookItem);
+});
+this.resultsElement.innerHTML = '';
+this.resultsElement.appendChild(fragment);
+},
+
+// Renders an error message
+// Previous results are retained in results area while error message is rendered on the top
+showError(msg) {
+const newError = document.createElement('p');
+newError.className = 'error';
+newError.innerHTML = msg;
+this.resultsArea.insertBefore(newError, this.resultsArea.children[1]);
+},
+
+clearError() {
+this.resultsArea.removeChild(document.querySelector('.error'));
+}
+
+}
