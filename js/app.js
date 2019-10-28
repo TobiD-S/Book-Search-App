@@ -117,3 +117,21 @@ const searchView = {
         });
     }
 }
+const resultsData = {
+    init() {
+        this.allResults = []; // Array to store all unique results
+        this.results = {}; // Object to store results for individual searches
+    },
+
+    setResults(res, term = null) {
+        if (!term) {
+            this.allResults = res;
+        } else {
+            this.results[term] = res;
+        }
+    },
+
+    getResults(term = null) {
+        return (!term ? this.allResults : this.results[term]);
+    }
+}
