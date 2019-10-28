@@ -356,3 +356,52 @@ const controller = {
       })
       .catch(e => this.handleError(e));
     },
+    
+  handleSortSelect(selected) {
+    this.currentSortSelection = selected;
+    this.clearError();
+    resultsView.render(this.sortList(resultsData.getResults(this.currQuickAccSelection).slice(0)));
+  },
+
+  sortList(list) {
+   //default state is no sort, most recent first if all results are displayed
+    if(this.currentSortSelection === 'Top Matches' && this.currQuickAccSelection === null) {
+      list = list.reverse();
+    }
+    else if(this.currentSortSelection === 'Title - A to Z') {
+      list = utils.sortTitle(list);
+    }
+    else if(this.currentSortSelection === 'Title - Z to A') {
+      list = utils.sortTitle(list).reverse();
+    }
+    else if(this.currentSortSelection === 'Highly Rated') {
+      list = utils.sortRating(list);
+    }
+    return list;
+  },
+
+  handleQuickAccSelect(selected) {
+    this.currQuickAccSelection = selected;
+    // Reset sort selection to 'Top Matches' on new rendering
+    this.currentSortSelection = 'Top Matches';
+    resultsControlsView.setSortTopMatches();
+    let listToRender = this.sortList((resultsData.getResults(this.currQuickAccSelection)).slice(0));
+    let searchTerm = selected || 'all searches';
+    this.clearError();
+    resultsControlsView.showResultCount(listToRender.length, searchTerm);
+    resultsView.render(listToRender);
+  },
+
+  handleError(e) {
+    this.clearError();
+    resultsView.showError(e);
+    this.showingError = true;
+  },
+
+  clearError() {
+    this.showingError && resultsView.clearError();
+    this.showingError = false;
+  }
+}
+
+controller.init();
