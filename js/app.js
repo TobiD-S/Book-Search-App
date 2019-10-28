@@ -303,3 +303,56 @@ const resultsControlsView = {
       return list.sort((a,b) => (a.volumeInfo.title > b.volumeInfo.title) ? 1 : ((b.volumeInfo.title > a.volumeInfo.title) ? -1 : 0));
     }
   }
+
+  
+const controller = {
+    init() {
+      resultsData.init();
+      searchView.init();
+      resultsView.init();
+      resultsControlsView.init();
+      backToTop.init();
+      // App state
+      this.showingError = false;
+      this.currentSortSelection = 'Top Matches';
+      this.currQuickAccSelection = null;   // show all results by default
+    },
+    // Searches for books and returns a promise that resolves a JSON list
+    searchForBooks(term) {
+      const GBOOKs_API_KEY = 'AIzaSyCVmIZaPlwXvpN85vwiXuT0m6yu_bK50y8';
+      const gBooksApiURL = `https://www.googleapis.com/books/v1/volumes?key=${GBOOKs_API_KEY}&q=`;
+      return fetch(`${gBooksApiURL}${term}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        }
+        else {
+          throw new Error('Sorry something went wrong with Google Books API');
+        }
+      });
+    },
+    // 1. Search
+    // 2. Update results data
+    // 3. Render results on success otherwise render error message
+    searchNRender(term) {
+      term = term.trim();
+      this.searchForBooks(term)
+      .then(results => {
+        // Check if query was valid and returned any results
+        if(results.totalItems > 0){
+          // Store unique results
+          resultsData.setResults(utils.getUnique(resultsData.getResults(), results.items));
+          // Store individual query results to access from quick access list, no duplicate queries in quick access list
+          !resultsData.getResults(term) && resultsControlsView.addQuickAccItem(term);
+          resultsData.setResults(results.items, term);
+          // Remove any previous error message
+          this.clearError();
+          // Reset quick access to 'All Results' and render
+          resultsControlsView.setQuickAccAll();
+        }
+        else {
+          throw new Error(`No matching results found for "${term}"`);
+        }
+      })
+      .catch(e => this.handleError(e));
+    },
