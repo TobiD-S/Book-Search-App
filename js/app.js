@@ -197,3 +197,109 @@ this.resultsArea.removeChild(document.querySelector('.error'));
 }
 
 }
+const resultsControlsView = {
+    init() {
+      this.resultsCount = document.querySelector('#results-count');
+      this.sortOptionList = document.querySelector('.sort-list');
+      this.sortTopMatches = document.querySelector('.top-matches');
+      this.quickAccList = document.querySelector('.quick-access-list');
+      this.quickAccAll = document.querySelector('.quick-access-all');
+  
+      this.sortOptionList.addEventListener('click', (event) => {
+        if(event.target.matches('.dropdown-item')){
+          // Update selected item
+          this.sortOptionList.querySelector('.selected').setAttribute("aria-selected", "false");
+          this.sortOptionList.querySelector('.selected').classList.remove('selected');
+          event.target.setAttribute("aria-selected", "true");
+          event.target.classList.add('selected');
+          // render sorted list
+          controller.handleSortSelect(event.target.innerText);
+        }
+      });
+  
+      this.quickAccAll.addEventListener('click', () => {
+        this.setQuickAccAll();
+      });
+    },
+  
+    showResultCount(count, term) {
+      this.resultsCount.innerHTML = `showing ${count} results for <span>${term}</span>`;
+    },
+  
+    // quick access list dynamically expands
+    addQuickAccItem(term) {
+      // Limit quick access list to 5 recent items and an 'All Results' option(children[5])
+      this.quickAccList.children.length === 6  && this.quickAccList.removeChild(this.quickAccList.children[4]);
+      const quickAccessItem = document.createElement('li');
+      quickAccessItem.innerHTML = `"${term}"`;
+      quickAccessItem.title = term;
+      quickAccessItem.role = 'option';
+      quickAccessItem.className = 'dropdown-item ellipsis';
+      quickAccessItem.addEventListener('click', (event) => {
+        this.quickAccList.querySelector('.selected').setAttribute("aria-selected", "false");
+        this.quickAccList.querySelector('.selected').classList.remove('selected');
+        event.target.setAttribute("aria-selected", "true");
+        event.target.classList.add('selected');
+        // render quick access selection
+        controller.handleQuickAccSelect(event.target.title);
+      });
+      this.quickAccList.insertBefore(quickAccessItem, this.quickAccList.childNodes[0]);
+    },
+  
+    setQuickAccAll() {
+      this.quickAccList.querySelector('.selected').setAttribute("aria-selected", "false");
+      this.quickAccList.querySelector('.selected').classList.remove('selected');
+      this.quickAccAll.setAttribute("aria-selected", "true");
+      this.quickAccAll.classList.add('selected');
+      controller.handleQuickAccSelect(null);
+    },
+  
+    setSortTopMatches() {
+      this.sortOptionList.querySelector('.selected').setAttribute("aria-selected", "false");
+      this.sortOptionList.querySelector('.selected').classList.remove('selected');
+      this.sortTopMatches.setAttribute("aria-selected", "true");
+      this.sortTopMatches.classList.add('selected');
+    }
+  }
+  
+  const backToTop = {
+    init() {
+      this.toTopBtn = document.querySelector('#to-top');
+      this.toTopBtn.addEventListener('click', () => window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      }));
+      window.addEventListener('scroll', () => this.scrollCheck());
+    },
+  
+    scrollCheck() {
+      this.toTopBtn.style.display =  window.scrollY > 250 ? "block" : "none";
+    }
+  }
+  
+  const utils = {
+    getUnique(currentArray, newArray){
+      // Reverse new Array before concatenation to preserve top matches
+      // Reverse concatenated array before finding unique elements to delete older duplicate entries and keep recent ones
+      let unique = currentArray.concat(newArray.slice(0).reverse()).reverse();
+      unique = unique.filter((item, index, array) => {
+        let found = array.findIndex(i => i.id === item.id);
+        return found === index;
+      });
+      return unique.reverse();
+    },
+  
+    sortRating(list) {
+      return list.sort((a,b) => {
+        // Set any undefined ratings to 0
+        (!a.volumeInfo.averageRating) && (a.volumeInfo.averageRating = 0);
+        (!b.volumeInfo.averageRating) && (b.volumeInfo.averageRating = 0);
+        // Scale values for integer comparison
+        return (b.volumeInfo.averageRating * 10 - a.volumeInfo.averageRating * 10);
+      });
+    },
+  
+    sortTitle(list) {
+      return list.sort((a,b) => (a.volumeInfo.title > b.volumeInfo.title) ? 1 : ((b.volumeInfo.title > a.volumeInfo.title) ? -1 : 0));
+    }
+  }
